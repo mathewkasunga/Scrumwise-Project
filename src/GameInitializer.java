@@ -34,33 +34,4 @@ public class GameInitializer {
         for (int i = 1; i <= numPlayers; i++) {
             String name;
             while (true) {
-                name = JOptionPane.showInputDialog("Player " + i + " name:");
-
-                // Handle case where user cancels the input
-                if (name == null) {
-                    JOptionPane.showMessageDialog(null, "Game setup canceled.");
-                    System.exit(0);
-                }
-
-                name = name.trim(); // Remove leading/trailing whitespace
-
-                // Validate player name input
-                if (name.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Player name cannot be empty.");
-                } else if (playerNames.contains(name)) {
-                    JOptionPane.showMessageDialog(null, "Player name already exists. Please enter a unique name.");
-                } else {
-                    playerNames.add(name);
-                    break; // Valid name entered
-                }
-            }
-
-            // Assign a unique color to each player
-            Color color = new Color[]{Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.PINK, Color.CYAN, Color.MAGENTA}[i % 8];
-            players.add(new Player(name, color)); // Create and add the player to the list
-        }
-
-        // After all players are set, show TokenSelectionUI before launching the game
-        SwingUtilities.invokeLater(() -> new TokenSelectionUI(players, tokenManager, () -> new GameUI(players)));
-    }
-}
+                name = JOptionPane.showInputDialog("Player "
