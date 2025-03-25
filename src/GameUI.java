@@ -13,7 +13,7 @@ public class GameUI {
     private int currentIndex = 0; // Tracks the current player's turn
 
     // Constructs the Monopoly game UI.
-    public GameUI(List<Player> players) {
+    public GameUI(List<Player> players, List<Property> properties) {
         this.players = players;
 
         // Shuffle the players list to randomize turn order
@@ -48,7 +48,7 @@ public class GameUI {
         // Button to roll the dice
         JButton rollButton = new JButton("Roll Dice");
         rollButton.setFont(new Font("Arial", Font.BOLD, 16));
-        rollButton.addActionListener(e -> rollDice()); // Assign action to roll dice when clicked
+        rollButton.addActionListener(e -> rollDice(properties)); // Assign action to roll dice when clicked
 
         // Add dice label and roll button to the side panel
         sidePanel.add(diceLabel);
@@ -62,25 +62,9 @@ public class GameUI {
     }
 
     // Simulates rolling two dice, updates the player's position, and moves to the next player's turn.
-    private void rollDice() {
+    private void rollDice(List<Property> properties) {
         Player player = players.get(currentIndex);
         Random rand = new Random();
 
         // Roll two dice (values from 1 to 6) and sum them
-        int roll = rand.nextInt(6) + 1 + rand.nextInt(6) + 1;
-
-        diceLabel.setText(player.getName() + " rolled: " + roll); // Display the dice roll result
-        player.move(roll); // Move the player based on the dice roll
-        board.repaint(); // Refresh the board display to update player positions
-        updateProfiles(); // Update the player profile information
-        currentIndex = (currentIndex + 1) % players.size(); // Move to the next player's turn
-    }
-
-    // Updates the side panel to reflect the latest player details, including name, token, and money.
-    private void updateProfiles() {
-        for (int i = 0; i < players.size(); i++) {
-            Player p = players.get(i);
-            profiles[i].setText(p.getName() + " | Token: " + p.getToken() + " | $" + p.getMoney());
-        }
-    }
-}
+        int roll = rand.nextInt(
