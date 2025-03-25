@@ -8,6 +8,7 @@ public class TokenSelectionUI extends JFrame {
     private int currentPlayerIndex = 0; // Tracks the current player selecting a token
     private final JComboBox<String> tokenDropdown; // Dropdown for selecting a token
     private final JLabel playerLabel; // Label to display the current player
+    private final JButton confirmButton; // Button to confirm the token selection
     private final Runnable onComplete; // Callback function to execute after token selection is complete
 
     // Constructs the Token Selection UI.
@@ -26,7 +27,10 @@ public class TokenSelectionUI extends JFrame {
         // Initialize UI components
         playerLabel = new JLabel();
         tokenDropdown = new JComboBox<>();
-        JButton confirmButton = new JButton("Confirm Token");
+        confirmButton = new JButton("Confirm Token");
+
+        // Disable confirm button initially
+        confirmButton.setEnabled(false);
 
         // Add event listener for the confirm button
         confirmButton.addActionListener(e -> selectToken());
@@ -49,7 +53,11 @@ public class TokenSelectionUI extends JFrame {
             playerLabel.setText("Player " + (currentPlayerIndex + 1) + " - " + currentPlayer.getName());
 
             // Update the dropdown with available tokens
-            tokenDropdown.setModel(new DefaultComboBoxModel<>(tokenManager.getTokens().toArray(new String[0])));
+            List<String> availableTokens = tokenManager.getTokens();
+            tokenDropdown.setModel(new DefaultComboBoxModel<>(availableTokens.toArray(new String[0])));
+
+            // Enable the confirm button only if a valid token is available
+            confirmButton.setEnabled(availableTokens.size() > 0);
         } else {
             // All players have selected their tokens, invoke the next step and close UI
             SwingUtilities.invokeLater(onComplete);
