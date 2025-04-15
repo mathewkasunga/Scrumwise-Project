@@ -3,15 +3,14 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// Class to represent a player in the game
 public class Player {
     private final String name;
     private final Color color;
     private int money = 1500;
+    private boolean eliminated = false;
     private int position = 0;
     private String token;
-    private boolean eliminated = false;
-    private List<Property> ownedProperties = new ArrayList<>();
+    private final List<Property> ownedProperties = new ArrayList<>();
 
     public Player(String name, Color color) {
         this.name = name;
@@ -22,59 +21,47 @@ public class Player {
         return name;
     }
 
-    public int getPosition() {
-        return position;
+    public Color getColor() {
+        return color;
     }
 
     public int getMoney() {
         return money;
     }
 
-    public String getToken() {
-        return token;
+    public boolean isEliminated() {
+        return eliminated;
     }
 
-    public Color getColor() {
-        return color;
+    public int getPosition() {
+        return position;
+    }
+
+    public void move(int steps) {
+        position = (position + steps) % 40;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     public void setToken(String token) {
         this.token = token;
     }
 
-    public boolean isEliminated() {
-        return eliminated;
-    }
-
     public void eliminate() {
         this.eliminated = true;
     }
 
-    public boolean move(int steps) {
-        int oldPosition = position;
-        position = (position + steps) % 40;
-        return (oldPosition + steps) >= 40;
-    }
-
-
-    /**
-     * Deducts money from the player's balance.
-     * Ensures the player has enough money before deducting.
-     * If not enough money, prints a warning (bankruptcy handling can be added later).
-     */
     public void deductMoney(int amount) {
         if (amount > 0 && money >= amount) {
             money -= amount;
         } else {
             JOptionPane.showMessageDialog(null, name + " does not have enough money!");
-            handleBankruptcy(); //handle here
+            handleBankruptcy();
         }
     }
 
-    /**
-     * Adds money to the player's balance.
-     * This can be used for collecting rent, passing GO, or other transactions.
-     */
     public void addMoney(int amount) {
         if (amount > 0) {
             money += amount;
@@ -96,19 +83,26 @@ public class Player {
         return ownedProperties;
     }
 
+    // ✅ Alias method for compatibility with GameUI and other classes
     public List<Property> getProperties() {
-        return ownedProperties;
+        return getOwnedProperties();
     }
 
-    public void handleBankruptcy() { // Method to handle the player's bankruptcy
-        if (!eliminated) { // Only handle bankruptcy once
+    public boolean ownsFullColorSet(String colorGroup) {
+        long owned = ownedProperties.stream()
+                .filter(p -> p.getColorGroup().equalsIgnoreCase(colorGroup))
+                .count();
+        return owned == Property.colorGroupCount(colorGroup);
+    }
+
+    public void handleBankruptcy() {
+        if (!eliminated) {
             eliminated = true;
             JOptionPane.showMessageDialog(null, name + " is bankrupt!");
-            // Iterate through the player's properties
             for (Property property : ownedProperties) {
-                property.setOwner(null); //set owner to null
+                property.setOwner(null);
             }
-            ownedProperties.clear(); //clear the properties
+            ownedProperties.clear();
         }
     }
 }
